@@ -1,26 +1,38 @@
-# Salesforce Sales Simulator (LWC + Apex)
+# Salesforce Sales Simulator & Currency Converter
 
-## 1. Visão Geral da Solução
-O Simulador de Vendas é uma solução SPA (Single Page Application) desenvolvida para acelerar o processo de criação de pedidos.
-Diferente do fluxo padrão, esta ferramenta permite que vendedores pesquisem produtos, montem um carrinho virtual e consolidem o pedido em uma única tela, eliminando múltiplos cliques e reduzindo o tempo de atendimento (TMA).
+## 📋 Project Overview
 
-## 2. Arquitetura Técnica
+A robust **Single Page Application (SPA)** built on Salesforce Lightning Web Components (LWC). This solution streamlines the order entry process by allowing users to search for products, manage an in-memory cart, perform real-time currency conversion (USD/EUR/BRL), and commit orders with transactional integrity.
 
-### Frontend (Lightning Web Components)
-A solução utiliza o padrão de composição "Pai-Filho" para gerenciamento de estado:
+## 🚀 Key Features
 
-* **`salesSimulator` (Orquestrador):** Gerencia o estado do carrinho (Array em memória), realiza cálculos de totais em tempo real usando `Intl.NumberFormat` e coordena a gravação dos dados.
-* **`productSearch` (Apresentação):** Componente desacoplado responsável pela busca de produtos via Wire Service e notificação de seleção via Custom Events.
+### 1. High-Performance Product Search
 
-### Backend (Apex Controller)
-A classe `SalesSimulatorController` atua como a camada de serviço segura:
+- **Architecture:** Implemented using **LWC Wire Service** for optimal caching and performance.
+- **UX:** Features debouncing logic to minimize server calls during typing.
 
-* **Padrão DTO:** Utiliza uma *Inner Class* para tipar os dados recebidos do Frontend.
-* **Controle Transacional:** Implementa `Savepoint` e `Rollback` para garantir a atomicidade. Se a criação de um item falhar, o pedido inteiro é revertido.
-* **Segurança:** Executa em modo `with sharing` e valida permissões de acesso aos dados.
+### 2. Real-Time Currency Integration
 
-## 3. Instalação
-Para realizar o deploy deste projeto em uma Org Salesforce:
+- **Integration:** Consumes an external REST API (`awesomeapi`) to fetch live exchange rates.
+- **Logic:** Converts the cart total dynamically from USD (Org Default) to BRL or EUR upon user request.
 
-1.  Clone o repositório.
-2.  Execute: `sf project deploy start --target-org SeuAlias`
+### 3. Scalable Backend (Apex)
+
+- **Bulkification:** The `createOrder` method utilizes the **Collect-Query-Map pattern**, ensuring O(1) query performance regardless of cart size (avoiding SOQL 101 errors).
+- **ACID Compliance:** Uses `Database.setSavepoint()` and `Rollback` to ensure atomic transactions (Header + Items are saved together or not at all).
+
+### 4. Interactive UX
+
+- **Notifications:** Uses `ShowToastEvent` with deep linking, allowing users to navigate directly to the created Order record.
+- **State Management:** Parent-Child component communication via Custom Events to maintain a decoupled architecture.
+
+## 🛠️ Technical Stack
+
+- **Frontend:** Lightning Web Components (LWC), JavaScript (ES6+).
+- **Backend:** Apex (Enterprise Patterns), SOQL.
+- **Integration:** REST API, Named Credentials (Simulated).
+- **Tools:** VS Code, Salesforce CLI, Git.
+
+---
+
+_Developed as a Portfolio Project focusing on Scalable Architecture._
