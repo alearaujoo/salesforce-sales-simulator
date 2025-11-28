@@ -39,19 +39,9 @@ global with sharing class LeadIngestionService {
         LeadRequest.class
       );
 
-      // 3. Lógica de Deduplicação (Evitar duplicidade pelo e-mail)
-      // 3. Deduplication Logic (Avoid duplicates by email)
-      List<Lead> existingLeads = [
-        SELECT Id
-        FROM Lead
-        WHERE Email = :incomingData.email
-        LIMIT 1
-      ];
-
-      Lead leadToUpsert = new Lead();
-      if (!existingLeads.isEmpty()) {
-        leadToUpsert.Id = existingLeads[0].Id; //Atualiza
-      }
+      // 3. Instanciar o Lead com a chave externa
+      // 3. Instantiate the Lead with the External Key
+      Lead leadToUpsert = new Lead(External_Id__c = incomingData.externalId);
 
       // 4. Mapeamento de Dados
       // 4. Data Mapping
@@ -63,7 +53,7 @@ global with sharing class LeadIngestionService {
 
       // Executa a operação de escrita (Criar ou Atualizar)
       // Executes the write operation (Create or Update)
-      upsert leadToUpsert;
+      upsert leadToUpsert External_Id__c;
 
       // 5. Montar resposta de sucesso
       // 5. Build success response
