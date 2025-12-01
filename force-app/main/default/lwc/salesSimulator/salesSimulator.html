@@ -1,0 +1,113 @@
+<template>
+  <lightning-layout multiple-rows>
+    <lightning-layout-item
+      size="12"
+      medium-device-size="6"
+      padding="around-small"
+    >
+      <c-product-search onaddproduct={handleProductAdd}></c-product-search>
+    </lightning-layout-item>
+
+    <lightning-layout-item
+      size="12"
+      medium-device-size="6"
+      padding="around-small"
+    >
+      <lightning-card title="Current Cart" icon-name="standard:orders">
+        <div class="slds-p-horizontal_medium">
+          <template lwc:if={cartHasItems}>
+            <table
+              class="slds-table slds-table_bordered slds-table_cell-buffer"
+            >
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Subtotal</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={cartItems} for:item="item">
+                  <tr key={item.productId}>
+                    <td>{item.productName}</td>
+                    <td>{item.quantity}</td>
+                    <td>${item.totalLine}</td>
+                    <td>
+                      <lightning-button-icon
+                        icon-name="utility:delete"
+                        alternative-text="Remove"
+                        variant="bare"
+                        class="slds-text-color_error"
+                        onclick={handleRemoveItem}
+                        data-id={item.productId}
+                      >
+                      </lightning-button-icon>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+
+            <div
+              class="slds-m-top_medium slds-text-align_right slds-text-heading_small"
+            >
+              <strong>Total: {cartTotal}</strong>
+            </div>
+
+            <div class="slds-m-top_medium slds-p-top_small slds-border_top">
+              <div
+                class="slds-grid slds-grid_align-end slds-grid_vertical-align-center"
+              >
+                <span class="slds-m-right_small slds-text-color_weak"
+                  >Converter para:</span
+                >
+                <lightning-button-group>
+                  <lightning-button
+                    label="BRL"
+                    value="BRL"
+                    onclick={handleCurrencyConvert}
+                  ></lightning-button>
+                  <lightning-button
+                    label="EUR"
+                    value="EUR"
+                    onclick={handleCurrencyConvert}
+                  ></lightning-button>
+                </lightning-button-group>
+              </div>
+
+              <template lwc:if={convertedTotal}>
+                <div
+                  class="slds-m-top_small slds-text-align_right slds-text-heading_medium slds-text-color_success"
+                >
+                  {selectedCurrency}: <strong>{convertedTotal}</strong>
+                </div>
+                <div
+                  class="slds-text-align_right slds-text-body_small slds-text-color_weak"
+                >
+                  Taxa: 1 USD = {exchangeRate} {selectedCurrency}
+                </div>
+              </template>
+            </div>
+
+            <div class="slds-m-top_large slds-text-align_center">
+              <lightning-button
+                variant="brand"
+                label="Create Order"
+                onclick={handleSaveOrder}
+                disabled={isLoading}
+              >
+              </lightning-button>
+            </div>
+          </template>
+
+          <template lwc:else>
+            <div class="slds-illustration slds-illustration_small">
+              <p class="slds-text-color_weak">Your cart is empty.</p>
+            </div>
+          </template>
+        </div>
+      </lightning-card>
+    </lightning-layout-item>
+  </lightning-layout>
+</template>

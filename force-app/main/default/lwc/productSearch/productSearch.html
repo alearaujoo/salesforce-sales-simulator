@@ -1,0 +1,45 @@
+<template>
+    <lightning-card title="Product Catalog" icon-name="standard:search">
+        <div class="slds-p-around_medium">
+            <lightning-input 
+                type="search" 
+                label="Search Product" 
+                placeholder="Type 'GenWatt' or 'Laptop'..."
+                onchange={handleSearchChange}>
+            </lightning-input>
+
+            <div class="slds-m-top_medium">
+                <template lwc:if={products.data}>
+                    <ul class="slds-has-dividers_bottom">
+                        <template for:each={products.data} for:item="prod">
+                            <li key={prod.Id} class="slds-item slds-p-vertical_small">
+                                <lightning-layout vertical-align="center">
+                                    <lightning-layout-item flexibility="auto">
+                                        <div class="slds-text-heading_small">{prod.Product2.Name}</div>
+                                        <div class="slds-text-color_weak">Code: {prod.Product2.ProductCode}</div>
+                                        <div>Price: <strong>${prod.UnitPrice}</strong></div>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item>
+                                        <lightning-button-icon 
+                                            icon-name="utility:add" 
+                                            variant="border-filled"
+                                            alternative-text="Add to Cart" 
+                                            onclick={handleAddClick} 
+                                            data-id={prod.Product2.Id} 
+                                            data-name={prod.Product2.Name}
+                                            data-price={prod.UnitPrice}>
+                                        </lightning-button-icon>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+                
+                <template lwc:if={products.error}>
+                    <p class="slds-text-color_error">Error loading products.</p>
+                </template>
+            </div>
+        </div>
+    </lightning-card>
+</template>
